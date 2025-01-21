@@ -1,7 +1,10 @@
 [package]
 name = "pokemon_tcg_sdk"
+author = "Alejandro R Natal"
+description = "A Rust implementation for the Pokemon TCG v2 API"
 version = "0.1.0"
 edition = "2021"
+license = "MIT OR Apache-2.0"
 
 [dependencies]
 derive_more = { version = "1.0.0", features = ["full"] }
