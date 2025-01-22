@@ -10,9 +10,9 @@ pub const POKEMON_TCG_URL: &'static str = "https://api.pokemontcg.io/v2";
 
 #[derive(Debug)]
 pub struct Pokemon {
-    pub client: reqwest::Client,
-    pub key: String,
-    pub args: HashMap<String, String>,
+    client: reqwest::Client,
+    key: String,
+    args: HashMap<String, String>,
 }
 
 impl Pokemon {
@@ -64,7 +64,6 @@ struct VecContainer<U> {
 }
 
 impl Query for Pokemon {
-
     async fn find<T: Url + DeserializeOwned + Clone>(&self, id: &str) -> Option<T> {
         let _url: String = T::path();
         if _url == "types" || _url == "supertypes" || _url == "subtypes" || _url == "rarities" {
@@ -158,6 +157,8 @@ impl Query for Pokemon {
     }
 }
 
+/// Used to implement Query Logic for the Pokemon TCG v2 API.
+/// Url internal trait is used to implement the different subroutes for the types: Card, Rarity, Set, Type, Supertype and Subtype.
 pub trait Query {
     async fn find<T: Url + DeserializeOwned + Clone>(&self, id: &str) -> Option<T>;
     async fn _where<T: Url + DeserializeOwned + Clone + Debug>(&mut self, args: HashMap<String, String>) -> Vec<T>;

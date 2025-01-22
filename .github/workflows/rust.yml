@@ -8,6 +8,7 @@ on:
 
 env:
   CARGO_TERM_COLOR: always
+  POKEMON_TCG_API_KEY: ${{ secrets.POKEMON_TCG_API_KEY }}
 
 jobs:
   build:

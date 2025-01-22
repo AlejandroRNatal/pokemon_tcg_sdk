@@ -76,7 +76,7 @@ pub struct CardSet {
     pub series: Option<String>,
     pub printedTotal: Option<u32>,
     pub total: Option<u32>,
-    pub legalities: Legalities,
+    pub legalities: Option<Legalities>,
     pub ptcgoCode: Option<String>,
     pub releaseDate: Option<String>,
     pub updatedAt: Option<String>,
