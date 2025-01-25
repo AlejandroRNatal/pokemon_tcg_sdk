@@ -11,7 +11,7 @@ let api_key = "".into();
 let api = Client::new(api_key);
 
 let card: Option<Card> = api.find::<Card>("xy1-1".into()).await;
-let set: Option<CardSet> = api.find::<CardSet>("xy1-1".into()).await;
+let set: Option<Set> = api.find::<Set>("xy1-1".into()).await;
 let _types: Vec<Type> = api.all::<Type>().await;
 ```
 
