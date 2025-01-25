@@ -3,19 +3,18 @@ use std::collections::HashMap;
 use std::fmt::Debug;
 use serde::{ de::DeserializeOwned, Deserialize, Serialize };
 
-use models::models::{ Card, CardSet, Rarity, Subtype, Supertype, Type };
+use models::models::{ Card, Set, Rarity, Subtype, Supertype, Type };
 
 pub const POKEMON_TCG_URL: &'static str = "https://api.pokemontcg.io/v2";
 
-
 #[derive(Debug)]
-pub struct Pokemon {
+pub struct Client {
     client: reqwest::Client,
     key: String,
     args: HashMap<String, String>,
 }
 
-impl Pokemon {
+impl Client {
     pub fn new(key: String) -> Self {
         Self{
             client: reqwest::Client::new(),
@@ -45,7 +44,7 @@ impl Url for Subtype {
     fn path() -> String { "subtypes".into() }
 }
 
-impl Url for CardSet {
+impl Url for Set {
     fn path() -> String {"sets".into() }
 }
 
@@ -63,7 +62,7 @@ struct VecContainer<U> {
     pub data: Vec<U>,
 }
 
-impl Query for Pokemon {
+impl Query for Client {
     async fn find<T: Url + DeserializeOwned + Clone>(&self, id: &str) -> Option<T> {
         let _url: String = T::path();
         if _url == "types" || _url == "supertypes" || _url == "subtypes" || _url == "rarities" {
@@ -180,7 +179,7 @@ mod tests {
         let expected: Container<Card> = serde_json::from_str(mock_data_string.as_str()).unwrap();
 
         let key = std::env::var("POKEMON_TCG_API_KEY").map_err(|_| { Error::ApiKeyNotFound }).unwrap();
-        let api = Pokemon::new(key);
+        let api = Client::new(key);
 
         let card = api.find::<Card>("xy1-1".into()).await.unwrap();
 
@@ -192,12 +191,12 @@ mod tests {
         let cwd = std::env::current_dir().unwrap();
         let mocks = cwd.join("src/mock/xy1.json");
         let mock_data_string = std::fs::read_to_string(mocks).unwrap();
-        let expected: Container<CardSet> = serde_json::from_str(mock_data_string.as_str()).unwrap();
+        let expected: Container<Set> = serde_json::from_str(mock_data_string.as_str()).unwrap();
 
         let key = std::env::var("POKEMON_TCG_API_KEY").map_err(|_| { Error::ApiKeyNotFound }).unwrap();
-        let api = Pokemon::new(key);
+        let api = Client::new(key);
 
-        let set = api.find::<CardSet>("xy1".into()).await.unwrap();
+        let set = api.find::<Set>("xy1".into()).await.unwrap();
 
         assert!(set.id == expected.data.id);
         assert!(set.name == expected.data.name);
@@ -212,7 +211,7 @@ mod tests {
         let expected: VecContainer<Type> = serde_json::from_str(mock_data_string.as_str()).unwrap();
 
         let key = std::env::var("POKEMON_TCG_API_KEY").map_err(|_| { Error::ApiKeyNotFound }).unwrap();
-        let mut api = Pokemon::new(key);
+        let mut api = Client::new(key);
 
         let types = api.all::<Type>().await;
         
@@ -229,7 +228,7 @@ mod tests {
         let expected: VecContainer<Subtype> = serde_json::from_str(mock_data_string.as_str()).unwrap();
 
         let key = std::env::var("POKEMON_TCG_API_KEY").map_err(|_| { Error::ApiKeyNotFound }).unwrap();
-        let mut api = Pokemon::new(key);
+        let mut api = Client::new(key);
 
         let types = api.all::<Subtype>().await;
         
@@ -247,7 +246,7 @@ mod tests {
         let expected: VecContainer<Supertype> = serde_json::from_str(mock_data_string.as_str()).unwrap();
 
         let key = std::env::var("POKEMON_TCG_API_KEY").map_err(|_| { Error::ApiKeyNotFound }).unwrap();
-        let mut api = Pokemon::new(key);
+        let mut api = Client::new(key);
 
         let types = api.all::<Supertype>().await;
         
@@ -258,7 +257,7 @@ mod tests {
     #[tokio::test]
     async fn test_no_find_by_id_on_types() {    
         let key = std::env::var("POKEMON_TCG_API_KEY").map_err(|_| { Error::ApiKeyNotFound }).unwrap();
-        let api = Pokemon::new(key);
+        let api = Client::new(key);
 
         let types = api.find::<Type>("Colorless".into()).await;
         assert!(types.is_none());
@@ -267,7 +266,7 @@ mod tests {
     #[tokio::test]
     async fn test_no_find_by_id_on_subtypes() {
         let key = std::env::var("POKEMON_TCG_API_KEY").map_err(|_| { Error::ApiKeyNotFound }).unwrap();
-        let api = Pokemon::new(key);
+        let api = Client::new(key);
 
         let subtypes = api.find::<Subtype>("Supporter".into()).await;
         assert!(subtypes.is_none());
@@ -276,7 +275,7 @@ mod tests {
     #[tokio::test]
     async fn test_no_find_by_id_on_supertypes() {
         let key = std::env::var("POKEMON_TCG_API_KEY").map_err(|_| { Error::ApiKeyNotFound }).unwrap();
-        let api = Pokemon::new(key);
+        let api = Client::new(key);
 
         let supertypes = api.find::<Supertype>("Trainer".into()).await;
         assert!(supertypes.is_none());
@@ -285,7 +284,7 @@ mod tests {
     #[tokio::test]
     async fn test_no_find_by_id_on_rarities() {
         let key = std::env::var("POKEMON_TCG_API_KEY").map_err(|_| { Error::ApiKeyNotFound }).unwrap();
-        let api = Pokemon::new(key);
+        let api = Client::new(key);
 
         let rarities = api.find::<Rarity>("Rare".into()).await;
         assert!(rarities.is_none());

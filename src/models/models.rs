@@ -26,7 +26,7 @@ pub struct Card {
     pub weaknesses: Option<Vec<Weakness>>,
     pub convertedRetreatCost: Option<u32>,
     pub retreatCost: Option<Vec<String>>,
-    pub set: Option<CardSet>,
+    pub set: Option<Set>,
     pub number: Option<String>,
     pub artist: Option<String>,
     pub rarity: Option<String>,
@@ -70,7 +70,7 @@ struct Weakness {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct CardSet {
+pub struct Set {
     pub id: Option<String>,
     pub name: Option<String>,
     pub series: Option<String>,
@@ -106,19 +106,19 @@ struct Images {
 pub struct TcgPlayer {
     url: Option<String>,
     updatedAt: Option<String>,
-    prices: Option<TcgPlayerPrices>,
+    pub prices: Option<TcgPlayerPrices>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct CardMarket {
     url: Option<String>,
     date: Option<String>,
-    prices: Option<Prices>,
+    pub prices: Option<Prices>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-struct Prices {
-    averageSellPrice: Option<f32>,
+pub struct Prices {
+    pub averageSellPrice: Option<f32>,
     lowPrice: Option<f32>,
     trendPrice: Option<f32>,
     germanProLow: Option<f32>,
@@ -127,26 +127,26 @@ struct Prices {
     reverseHoloLow: Option<f32>,
     reverseHoloTrend: Option<f32>,
     lowPriceExPlus: Option<f32>,
-    avg1: Option<f32>,
-    avg7: Option<f32>,
-    avg30: Option<f32>,
-    reverseHoloAvg1: Option<f32>,
-    reverseHoloAvg7: Option<f32>,
-    reverseHoloAvg30: Option<f32>, 
+    pub avg1: Option<f32>,
+    pub avg7: Option<f32>,
+    pub avg30: Option<f32>,
+    pub reverseHoloAvg1: Option<f32>,
+    pub reverseHoloAvg7: Option<f32>,
+    pub reverseHoloAvg30: Option<f32>, 
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct TcgPlayerPrices {
-    normal: Option<TcgPricing>,
-    reverseHolofoil: Option<TcgPricing>,
+    pub normal: Option<TcgPricing>,
+    pub reverseHolofoil: Option<TcgPricing>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-struct TcgPricing {
+pub struct TcgPricing {
     low: Option<f32>,
     mid: Option<f32>,
     high: Option<f32>,
-    market: Option<f32>,
+    pub market: Option<f32>,
     directLow: Option<f32>,
 }
 
