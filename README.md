@@ -5,7 +5,7 @@
 ### Usage
 
 ```rust
-use crate::client::client::{ Card, CardSet, Pokemon, Type };
+use crate::client::client::{ Card, Set, Pokemon, Type };
 
 let api_key = "".into();
 let api = Client::new(api_key);
