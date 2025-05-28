@@ -1,6 +1,6 @@
 [package]
-name = "pokemon_tcg_sdk"
-author = "Alejandro R Natal"
+name = "pokemon_tcg_sdk_rs"
+author = "Alejandro Rodriguez Natal"
 description = "A Rust implementation for the Pokemon TCG v2 API"
 version = "0.1.0"
 edition = "2021"
