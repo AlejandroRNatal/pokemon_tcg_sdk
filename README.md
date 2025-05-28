@@ -5,7 +5,8 @@
 ### Usage
 
 ```rust
-use crate::client::client::{ Card, Set, Pokemon, Type };
+use pokemon_tcg_sdk_rs::{ Client, Query };
+use pokemon_tcg_sdk_rs::models::models::{ Card, Set, Pokemon, Type };
 
 let api_key = "".into();
 let api = Client::new(api_key);
