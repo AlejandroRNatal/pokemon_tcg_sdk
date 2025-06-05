@@ -5,7 +5,9 @@
 ### Usage
 
 ```rust
-use crate::client::client::{ Card, Set, Pokemon, Type };
+use pokemon_tcg_sdk_rs::{ Client };
+use pokemon_tcg_sdk_rs::models::models::{ Card, Pokemon, Set, Type };
+use pokemon_tcg_sdk_rs::models::errors::Error;
 
 let api_key = "".into();
 let api = Client::new(api_key);
@@ -18,7 +20,6 @@ let _types: Vec<Type> = api.all::<Type>().await;
 ## Dependencies
 - serde
 - reqwest
-- tokio
 
 ## Dev
 

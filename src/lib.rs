@@ -7,6 +7,7 @@ use models::models::{ Card, Set, Rarity, Subtype, Supertype, Type };
 
 pub const POKEMON_TCG_URL: &'static str = "https://api.pokemontcg.io/v2";
 
+///! Interacts with the Pokemon TCG IO API via a dev API Key.
 #[derive(Debug)]
 pub struct Client {
     client: reqwest::Client,
@@ -15,6 +16,7 @@ pub struct Client {
 }
 
 impl Client {
+    ///! Creates a new instance with provided API Key
     pub fn new(key: String) -> Self {
         Self{
             client: reqwest::Client::new(),
@@ -25,6 +27,8 @@ impl Client {
 }
 
 trait Url {
+    /// route used by the pokemontcg.io card database for: cards, subtypes, types, supertypes,
+    /// energy, trainers, etc...
     fn path() -> String;
 }
 
@@ -45,39 +49,44 @@ impl Url for Subtype {
 }
 
 impl Url for Set {
-    fn path() -> String {"sets".into() }
+    fn path() -> String { "sets".into() }
 }
 
 impl Url for Rarity {
     fn path() -> String {"rarities".into()}
 }
 
+///! Internal structure to simplify the Deserialization of incoming JSON responses.
 #[derive(Serialize, Deserialize)]
 struct Container<U> {
     pub data: U,
 }
 
+///! Internal structure to simplify the Deserialization of incoming JSON responses.
 #[derive(Debug, Serialize, Deserialize)]
 struct VecContainer<U> {
     pub data: Vec<U>,
 }
 
 impl Query for Client {
+
+    /// Attempts to find a Type T by id; excludes: types, supertypes, subtypes and rarities.
     async fn find<T: Url + DeserializeOwned + Clone>(&self, id: &str) -> Option<T> {
         let _url: String = T::path();
-        if _url == "types" || _url == "supertypes" || _url == "subtypes" || _url == "rarities" {
-            return None;
+
+        match _url.as_str() {
+            "types" | "supertypes" | "subtypes" | "rarities" => { return None; }
+            _ => {},
         }
 
         let url: String = format!("{POKEMON_TCG_URL}/{_url}/{id}").into();
         let key = self.key.clone();
 
         let response: Result<reqwest::Response, reqwest::Error> = self.client.get(url)
-        .header("X-Api-Key", format!("{key}"))
-        .header("User-Agent", "Mozilla/5.0")
-        .send()
-        .await;
-
+                                                                             .header("X-Api-Key", format!("{key}"))
+                                                                             .header("User-Agent", "Mozilla/5.0")
+                                                                             .send().await;
+        
         if let Ok(resp) =  response {
             if let Ok(container) = resp.json::<Container<T>>().await {
                 return Some(container.data.clone());
@@ -86,7 +95,8 @@ impl Query for Client {
 
         None
     }
-    
+
+    /// Searches for T candidates that match args HashMap<String, String> and returns a Vec<T>. 
     async fn _where<T: Url + DeserializeOwned + Clone + Debug>(&mut self, args: HashMap<String, String>) -> Vec<T> {
         self.args.clear();
         for(k, v) in args.iter() {
@@ -95,10 +105,11 @@ impl Query for Client {
 
         self.all::<T>().await
     }
-
+    
+    /// Returns a Vec<T> containing all expected members of type T within PokemonTCG API V2.
     async fn all<T: Url + DeserializeOwned + Clone + Debug>(&mut self) -> Vec<T> {
         let mut res = Vec::<T>::new();
-        let mut fetch_all = false;// TODO: Fix paging, it causes an infinite loop, should be true
+        let mut fetch_all = true;// TODO: Fix paging, it causes an infinite loop, should be true
 
         let key = self.key.clone();
         let u = T::path();
@@ -151,7 +162,7 @@ impl Query for Client {
                 break 'paging;
             };    
         }
-        self.args.clear();
+        self.args.clear();// parameters for the query are cleared after each request is made...
         res
     }
 }

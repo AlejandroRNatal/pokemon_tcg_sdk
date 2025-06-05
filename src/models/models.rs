@@ -177,6 +177,49 @@ pub struct Subtype(pub String);
 #[derive(Clone, Debug, Deserialize, Serialize, PartialEq, PartialOrd)]
 pub struct Rarity(pub String);
 
+pub fn extract_card_market_price(c: Card) -> Option<f32> {
+    let mut res = None;
+    
+
+    if let Some(card_market) = c.cardmarket {
+        if let Some(prices) = card_market.prices {
+            if let Some(avg) = prices.averageSellPrice {
+                res = Some(avg);
+            }else if let Some(avg1) = prices.avg1 {
+                res = Some(avg1);
+            } else if let Some(avg30) = prices.avg30 {
+                res = Some(avg30);
+            }
+        }
+    } 
+
+    res
+}
+
+pub fn extract_tcg_player_price(c: Card) -> Option<f32> {
+    let mut res = None;
+
+    if let Some(tcg_player) = c.tcgplayer {
+        if let Some(tcg_player_prices) = tcg_player.prices {
+            if let Some(normal) = tcg_player_prices.normal {
+                if let Some(market) = normal.market {
+                    res = Some(market);
+                }
+                else if let Some(mid) = normal.mid {
+                    res = Some(mid);
+                }
+                else if let Some(high) = normal.high {
+                    res = Some(high);
+                }
+                else if let Some(low) = normal.high {
+                    res = Some(low);
+                }
+            }
+        }
+    };
+    res
+}
+
 pub fn extract_price(c: Card) -> f32 {
     let res = -99.9;
     if let Some(card_market) = c.cardmarket {
